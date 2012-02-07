@@ -67,37 +67,37 @@ void red(char* cmd[], int loc, int index, int len){
 
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
-    printError();
-    //printf("flag1\n");
-    flag = 1;
+      printError();
+      //printf("flag1\n");
+      flag = 1;
     }
 
   }
   else if(strlen(curr)-1==loc){//not last token, but end of token
-      if(cmd[index+1] != NULL){
-        if(cmd[index+2]!=NULL){
-          printError();
-          flag = 1;
-        }
-        else
+    if(cmd[index+1] != NULL){
+      if(cmd[index+2]!=NULL){
+        printError();
+        flag = 1;
+      }
+      else
         file = cmd[index+1];
-      }
-      else{
-        printError();
-        flag = 1;
-        //printf("flag2\n");
-      }
-      if(cmd[index - 1]==NULL){
-        printError();
-        flag = 1;
-      }
+    }
+    else{
+      printError();
+      flag = 1;
+      //printf("flag2\n");
+    }
+    if(cmd[index - 1]==NULL){
+      printError();
+      flag = 1;
+    }
 
   }
   else if(index ==0){//first token
     if(loc==0){//first char
-    printError();
-    flag = 1;
-    //printf("flag3\n");
+      printError();
+      flag = 1;
+      //printf("flag3\n");
     }
   }
 
@@ -112,54 +112,51 @@ void red(char* cmd[], int loc, int index, int len){
     //if(fopen(file, "r")==NULL){
     //printf("file: %s\n", file);
 
-      int rd = fork();
-      if (rd == 0){//Child
-        close(STDOUT_FILENO);
-        int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
-        if(f==-1){
-          printError();
-          //printf("flag4\n");
-          //exit(1);
-        }
-        else{
+    int rd = fork();
+    if (rd == 0){//Child
+      close(STDOUT_FILENO);
+      int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
+      if(f==-1){
+        printError();
+        //printf("flag4\n");
+        //exit(1);
+      }
+      else{
         cmd[index] = NULL;
         /*
-        int i;
-        for(i = 0; i < len + 1; i++){
-          printf("cmd[%d]: %s\n", i, cmd[i]);
-        }
-        */
+           int i;
+           for(i = 0; i < len + 1; i++){
+           printf("cmd[%d]: %s\n", i, cmd[i]);
+           }
+           */
         execvp(cmd[0], cmd);
         printError();
         //printf("flag6\n");
         exit(1);
-        }
       }
+    }
 
-      else if (rd > 0){//Parent
-        wait(NULL);
-        //printf("waited for: %d\n", (int) rd);
-      }
-      else{
-        printError();
-        //printf("flag7\n");
-      }
-      /*
-      if(dup2(f, 1) < 0){
-        printError();
-      }
-      else{
-        runCmd(cmd, len, f);
-        close(f);
-      }
-      */
+    else if (rd > 0){//Parent
+      wait(NULL);
+      //printf("waited for: %d\n", (int) rd);
+    }
+    else{
+      printError();
+      //printf("flag7\n");
+    }
+    /*
+       if(dup2(f, 1) < 0){
+       printError();
+       }
+       else{
+       runCmd(cmd, len, f);
+       close(f);
+       }
+       */
 
   }
-
-
-
 }
-//HANDLE ZIPS
+  //HANDLE ZIPS
 void zip(char* cmd[], int loc, int index, int len){
 
   char* curr = cmd[index];
@@ -170,37 +167,37 @@ void zip(char* cmd[], int loc, int index, int len){
 
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
-    printError();
-    //printf("flag1\n");
-    flag = 1;
+      printError();
+      //printf("flag1\n");
+      flag = 1;
     }
 
   }
   else if(strlen(curr)-1==loc){//not last token, but end of token
-      if(cmd[index+1] != NULL){
-        if(cmd[index+2]!=NULL){
-          printError();
-          flag = 1;
-        }
-        else
+    if(cmd[index+1] != NULL){
+      if(cmd[index+2]!=NULL){
+        printError();
+        flag = 1;
+      }
+      else
         file = cmd[index+1];
-      }
-      else{
-        printError();
-        flag = 1;
-        //printf("flag2\n");
-      }
-      if(cmd[index - 1]==NULL){
-        printError();
-        flag = 1;
-      }
+    }
+    else{
+      printError();
+      flag = 1;
+      //printf("flag2\n");
+    }
+    if(cmd[index - 1]==NULL){
+      printError();
+      flag = 1;
+    }
 
   }
   else if(index ==0){//first token
     if(loc==0){//first char
-    printError();
-    flag = 1;
-    //printf("flag3\n");
+      printError();
+      flag = 1;
+      //printf("flag3\n");
     }
   }
 
@@ -217,43 +214,42 @@ void zip(char* cmd[], int loc, int index, int len){
 
 
 
-  int rd=fork();
-  pipe(fds);
-  if(rd==0){//child 1
-    int rd2 = fork();
-    if(rd2 == 0){//child 2
-      close(fds[0]);//close stdout
-      dup2(fds[1], STDOUT_FILENO);
-      cmd[index] = NULL;
-      execvp(cmd[0], cmd);
-      printError();
-      exit(1);
-    }
-    else if(rd2>0){//parent 2
-      wait(NULL);
-      close(fds[1]);
-      close(STDOUT_FILENO);
-      int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
-      if(f==-1){
+    int rd=fork();
+    pipe(fds);
+    if(rd==0){//child 1
+      int rd2 = fork();
+      if(rd2 == 0){//child 2
+        close(fds[0]);//close stdout
+        dup2(fds[1], STDOUT_FILENO);
+        cmd[index] = NULL;
+        execvp(cmd[0], cmd);
         printError();
+        exit(1);
       }
-      dup2(fds[0], STDIN_FILENO);
-      char* zip[2];
-      zip[0] = strdup("gzip");
-      zip[1] = NULL;
-      execvp(zip[0], zip);
-      printError();
-      exit(1);
+      else if(rd2>0){//parent 2
+        wait(NULL);
+        close(fds[1]);
+        close(STDOUT_FILENO);
+        int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
+        if(f==-1){
+          printError();
+        }
+        dup2(fds[0], STDIN_FILENO);
+        char* zip[2];
+        zip[0] = strdup("gzip");
+        zip[1] = NULL;
+        execvp(zip[0], zip);
+        printError();
+        exit(1);
       }
       else printError();
-  }
-  else if(rd > 0){wait(NULL);}
-  else{printError();}
+    }
+    else if(rd > 0){wait(NULL);}
+    else{printError();}
   }
 }
 
-void
-forkCmd(char* cmd[]){
+void forkCmd(char* cmd[]){
 
   int rd = fork();
   if (rd == 0){//Child
@@ -282,8 +278,8 @@ void runCmd(char* cmd[], int len, int output){
   else if(strcmp("pwd", cmd[0])==0){
     char* err = getcwd(buffer,4096);
     if(err==NULL){
-    printError();
-    exit(1);
+      printError();
+      exit(1);
     }
     if(cmd[1]!=NULL)printError();
     else{
@@ -308,38 +304,38 @@ void runCmd(char* cmd[], int len, int output){
   else{//NOT BUILT-IN
 
 
-      //CHECK for redirects
-      int l;
-      int redf = 0;
-      int zipf = 0;
-      int err = 0;
-      char* redc;
-      char* zipc;
-      int forkc = 0;
+    //CHECK for redirects
+    int l;
+    int redf = 0;
+    int zipf = 0;
+    int err = 0;
+    char* redc;
+    char* zipc;
+    int forkc = 0;
 
-                      for(l = 0; l < len-1; l++){
-                                zipc = strchr(cmd[l], ':');
-                                redc = strchr(cmd[l], '>');
+    for(l = 0; l < len-1; l++){
+      zipc = strchr(cmd[l], ':');
+      redc = strchr(cmd[l], '>');
 
-                                if(zipc != NULL){//HAS ZIP
-                                        zipf++;
-                                        if(redc != NULL){err = 1;redf++;}
-                                        else if(zipf==1){
-                                               zip(cmd, zipc-cmd[l], l, len-1);
-                                        }
-                                }
-                                else if (redc != NULL){//HAS RED, NO ZIP
-                                        redf++;
-                                        if(redf==1){
-                                          red(cmd, redc-cmd[l], l, len-1);
-                                        }
-                                }
-        else{forkc++;}
+      if(zipc != NULL){//HAS ZIP
+        zipf++;
+        if(redc != NULL){err = 1;redf++;}
+        else if(zipf==1){
+          zip(cmd, zipc-cmd[l], l, len-1);
+        }
+      }
+      else if (redc != NULL){//HAS RED, NO ZIP
+        redf++;
+        if(redf==1){
+          red(cmd, redc-cmd[l], l, len-1);
+        }
+      }
+      else{forkc++;}
 
-                        }
+    }
 
     if(zipf==0 && redf==0){
-    forkCmd(cmd);
+      forkCmd(cmd);
     }
   }
 
@@ -440,10 +436,6 @@ int main(int argc, char *argv[])
     }
   }
 
-
-
-
-
   /*char buffer[80];
     //write last char to x for overrun check
   buffer[78] = 'x';
@@ -523,4 +515,3 @@ int main(int argc, char *argv[])
   */
   return 0;
 }
-
