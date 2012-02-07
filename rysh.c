@@ -18,6 +18,24 @@ void printError(){
   char error_message[30] = "An error has occurred\n";
   write(STDERR_FILENO, error_message, strlen(error_message));
 }
+
+// NEEDED ON 10.6, strndup not built in
+char* strndup(const char* s, size_t n) {
+  size_t l = strlen(s);
+  char *r = NULL;
+
+  if (l < n)
+    return strdup(s);
+
+  r = (char *) malloc(n+1);
+  if (r == NULL)
+    return NULL;
+
+  strncpy(r, s, n);
+  r[n] ='\0';
+  return r;
+}
+
 /*
 int isMult(char* tok){
   int i;
@@ -351,7 +369,7 @@ int main(int argc, char *argv[])
   int OUTPUT = STDOUT_FILENO;
   char buffer[BUF_SIZE];
   char *commands[1024];
-  if(!file)printf("myshell> ");
+  if(!file)printf("rysh> ");
   while(fgets(buffer, sizeof(buffer), input)){
     //printf("Line: %s\n", buffer);
     //printf("line size:%d\n", strlen(buffer));
@@ -417,7 +435,7 @@ int main(int argc, char *argv[])
 
     }
 
-    if(!file)printf("myshell> ");
+    if(!file)printf("rysh> ");
     //printf("%s\n", tok);
     }
   }
