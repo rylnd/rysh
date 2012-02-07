@@ -1,0 +1,4 @@
+echo test14      
+  pwd
+./myprog 1 2	
+	cal	

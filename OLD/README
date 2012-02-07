@@ -1,0 +1,99 @@
+Test Scripts: test.csh
+              run_all_tests.csh  --> runs all the test cases and generates the 
+                                     file "grade.txt" in the current directory.
+
+Steps to run test script:
+------------------------
+1) Copy test.csh, run_all_tests.csh to your project directory.
+2) Make sure the test.csh, run_all_tests.csh have the execute permission.
+   Otherwise, use
+   $$$]% chmod +x ./test.csh
+   $$$]% chmod +x ./run_all_tests.csh
+
+
+Usage:
+------
+$$$]% ./run_all_tests.csh 
+        --> to run all the tests and generate the "grade.txt"
+$$$]% ./test.csh <test_nr> 
+        --> to run a particular test 
+
+
+Testcases Used:
+---------------
+
+Test Nr        Purpose
+-------        -------
+Basic Tests :
+   1           Checks whether the files "Makefile(or makefile or MAKEFILE)" 
+               and "README*(or readme* or Readme*)" are present
+   2           Checks whether doing a make generates
+               the exectable "myshell"
+   3           Checks whether the program handles too many arguments than
+               expected and prints the appropriate error message in stderr.
+   4           Tests the program with a non-existent input file. Checks 
+               whether the program issues the appropriate error message
+               in stderr.
+   5           Tests the program with an empty file as input.
+   6           Tests the program with a file containing only a blank line.
+Testing single commands:
+   7           Tests whether the program supports pwd command.
+   8           Tests whether the shell prints an error on having an argument
+               to pwd command.
+   9           Tests whether the shell supports external comamnds.
+  10           Tests whether the shell supports exit command.
+  11           Test whether the shell supports cd command without an argument
+               to change to home directory of user.
+  12           Tests whether the shell prints error and continues, on 
+               encountering a line longer than 512 characters.
+  13           Test whether the shell supports cd command with an argument
+  14           Test the shell with a batch file containing commands with
+               different formatting using tabs, spaces.
+Testing for Multiple command support using ";" :
+  15           Tests the shell with a command line containing only ";"
+  16           Tests the shell with a command line containing a series of 
+               ";" s.
+  17           Tests the shell with mutliple commands separated by ";"
+  18           Tests the shell with different formatting of multiple comamnds
+               with ";" using tabs, spaces
+  19           Tests the shell with cmdline consisting of mutliple commands 
+               separated by ";" and having ";" at the end.
+Testing output redirection(>) supported by shell:
+  20           Tests the redirection with external command.
+  21           Tests the redirection with different formatting using
+               tabs, spaces
+  22           Tests the shell with no argument specified to the redirection
+               (>) operator
+  23           Tests an error condition with using redirection without
+               issuing a command
+  24           Tests an error condition with using multiple arguments to 
+               redirection operator(>)
+  25           Tests an error condition with using redirection multiple times
+               with a command
+Testing multiple commands(;) with redirection(>):
+  26           Tests redirection with a single command in a multi-command 
+               command line
+  27           Tests redirection with mutlitple commands in a multi-command
+               command line
+  28           Tests an error condition with wrong usage of redirection in 
+               a command line with multiple commands
+Testing for Pipe(:) :
+  29           Tests the pipe support in shell with an external command
+  30           Tests the shell with no argument specified to the pipe(:)
+               operator
+  31           Tests the error condition of using pipe(:) operator on comamnd
+               line without a command
+  32           Tests the error condition of using the redirection(>) and 
+               pipe(:) together with a single command;
+  33           Tests the error condition of using the pipe(:) and redirection
+               (>) together with a single command in a different order.
+  34           Tests the error condition of having mutliple arguments to the 
+               pipe(:) operator
+  35           Tests the error condition of having multiple pipe operators with
+               a single command.
+Testing multiple commands(;) with pipe(:) :
+  36           Tests the pipe operation with a single command in a 
+               multi-command command line
+  37           Tests the pipe operation with multiple commands in a
+               multi-command command line
+  
