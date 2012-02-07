@@ -45,30 +45,18 @@ int isMult(char* tok){
   }
   return isM;
 }
-
 */
+
 //HANDLE REDIRECTS
 void red(char* cmd[], int loc, int index, int len){
 
   char* curr = cmd[index];
   char* file = NULL;
   int flag=0;
-  //printf("redirect\n");
-  //printf("end%s\n", file);
-
-  //int i;
-  /*
-  for(i = 0; i < len + 1; i++){
-    printf("cmd[%d]: %s\n", i, cmd[i]);
-  }
-  */
-  //printf("length:%d  index: %d\n", strlen(curr)-1, loc);
-  //printf("length2:%d  index2: %d\n",len-1, index) ;
 
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
-      //printf("flag1\n");
       flag = 1;
     }
 
@@ -85,7 +73,6 @@ void red(char* cmd[], int loc, int index, int len){
     else{
       printError();
       flag = 1;
-      //printf("flag2\n");
     }
     if(cmd[index - 1]==NULL){
       printError();
@@ -97,20 +84,14 @@ void red(char* cmd[], int loc, int index, int len){
     if(loc==0){//first char
       printError();
       flag = 1;
-      //printf("flag3\n");
     }
   }
 
   if(flag==0){//no error, need file
     if(file==NULL){
-      //printf("size:%d\n", strlen(curr) - (loc + 1));
       file = strndup(curr + (loc+1), strlen(curr) - (loc+1));
-      //check if exists
     }
     //DUP2 HANDLING*****
-
-    //if(fopen(file, "r")==NULL){
-    //printf("file: %s\n", file);
 
     int rd = fork();
     if (rd == 0){//Child
@@ -118,42 +99,21 @@ void red(char* cmd[], int loc, int index, int len){
       int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
       if(f==-1){
         printError();
-        //printf("flag4\n");
-        //exit(1);
       }
       else{
         cmd[index] = NULL;
-        /*
-           int i;
-           for(i = 0; i < len + 1; i++){
-           printf("cmd[%d]: %s\n", i, cmd[i]);
-           }
-           */
         execvp(cmd[0], cmd);
         printError();
-        //printf("flag6\n");
         exit(1);
       }
     }
 
     else if (rd > 0){//Parent
       wait(NULL);
-      //printf("waited for: %d\n", (int) rd);
     }
     else{
       printError();
-      //printf("flag7\n");
     }
-    /*
-       if(dup2(f, 1) < 0){
-       printError();
-       }
-       else{
-       runCmd(cmd, len, f);
-       close(f);
-       }
-       */
-
   }
 }
   //HANDLE ZIPS
@@ -168,7 +128,6 @@ void zip(char* cmd[], int loc, int index, int len){
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
-      //printf("flag1\n");
       flag = 1;
     }
 
@@ -185,7 +144,6 @@ void zip(char* cmd[], int loc, int index, int len){
     else{
       printError();
       flag = 1;
-      //printf("flag2\n");
     }
     if(cmd[index - 1]==NULL){
       printError();
@@ -197,22 +155,14 @@ void zip(char* cmd[], int loc, int index, int len){
     if(loc==0){//first char
       printError();
       flag = 1;
-      //printf("flag3\n");
     }
   }
 
   if(flag==0){//no error, need file
     if(file==NULL){
-      //printf("size:%d\n", strlen(curr) - (loc + 1));
       file = strndup(curr + (loc+1), strlen(curr) - (loc+1));
       //check if exists
     }
-
-
-
-
-
-
 
     int rd=fork();
     pipe(fds);
@@ -260,7 +210,6 @@ void forkCmd(char* cmd[]){
 
   else if (rd > 0){//Parent
     wait(NULL);
-    //printf("waited for: %d\n", (int) wc);
   }
   else
   printError();
@@ -303,7 +252,6 @@ void runCmd(char* cmd[], int len, int output){
   }
   else{//NOT BUILT-IN
 
-
     //CHECK for redirects
     int l;
     int redf = 0;
@@ -338,13 +286,11 @@ void runCmd(char* cmd[], int len, int output){
       forkCmd(cmd);
     }
   }
-
 }
 
 
 int main(int argc, char *argv[])
 {
-
   FILE *input;
   int file = 0;
   if(argc !=2 && argc != 1){
@@ -367,18 +313,11 @@ int main(int argc, char *argv[])
   char *commands[1024];
   if(!file)printf("rysh> ");
   while(fgets(buffer, sizeof(buffer), input)){
-    //printf("Line: %s\n", buffer);
-    //printf("line size:%d\n", strlen(buffer));
-    //printf("last char:\"%c\"\n", buffer[strlen(buffer)-2]);
-    //if((buffer[512] != EOF) && (buffer[512] != ']') && (buffer[512] != '\n')){
     if(strlen(buffer) > 512){
       if(file){
         write(STDOUT_FILENO, buffer, strlen(buffer));
-
-        //printf("too long\n");
          }
       printError();
-      //printf("buffer[511]: %s\n", buffer[511]);
     }
     else{
     //SPLIT UP STRING
@@ -436,82 +375,5 @@ int main(int argc, char *argv[])
     }
   }
 
-  /*char buffer[80];
-    //write last char to x for overrun check
-  buffer[78] = 'x';
-
-        simPair *sortArray;
-        sortArray =(simPair*) malloc(sizeof(simPair) * 10);
-
-  FILE * input;
-
-  if(argc != 2)
-  {//incorrect number of arguments, print usage
-    fprintf(stderr, "Usage: mysort <filename>\n");
-    exit(1);
-  }
-
-  input = fopen(argv[1], "r"); //open for readint
-  //}
-  if(input == NULL)
-  {
-    fprintf(stderr, "Error: Cannot open file\n");
-    exit(1);
-  }
-
-  fgets(buffer, 80, input);
-
-
-  int n = -1;
-  int max = 10;
-
-  //make a simPair
-  simPair temp;
-    while(!feof(input))
-  {
-    n++;
-    if((buffer[78] != EOF) && (buffer[78] != 'x') && (buffer[78] != '\n')){
-      //over 80 characters in line
-      fprintf(stderr, "Error: Line too long\n");
-      exit(1);
-    }
-    //save line
-    temp.strVal = (char*) malloc(strlen(buffer) + 1);
-          strcpy(temp.strVal, buffer);
-
-    //split into tokens
-                char *tok = strtok(buffer, " \t\n");
-    if(tok != NULL){
-      if(isNum(tok, strlen(tok)))
-      temp.key = atoi(tok);
-      else temp.key = 0;
-      //printf("%d: " , temp.key);
-    }
-    else{temp.key = 0;}
-    //printf("%s \n" , temp.strVal);
-
-    //check size
-    if(n >= max){//need to realloc
-      max = max*2;
-      sortArray = (simPair*) realloc(sortArray, max*sizeof(simPair));
-    }
-    sortArray[n] = temp;
-    //write last char to x for overrun check
-    buffer[78] = 'x';
-    fgets(buffer, 80, input);
-
-  }
-
-  fclose(input);
-
-  //sort array
-  qsort(sortArray, n + 1, sizeof(simPair), sortFn);
-  int i;
-  //print array value back out
-  for(i=0; i <= n; i++){
-    //printf("array[%d]%d: %s\n",i,  sortArray[i].key, sortArray[i].strVal);
-    printf("%s", sortArray[i].strVal);
-  }
-  */
   return 0;
 }
