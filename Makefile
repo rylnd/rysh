@@ -10,7 +10,7 @@ all: $(TARGET)
 $(TARGET) : $(ODIR)/$(OBJ)
 	gcc -o $(TARGET) $< -Wall
 
-$(ODIR)/$(OBJ) : $(ODIR)/%.o : $(SDIR)/%.c
+$(ODIR)/%.o : $(SDIR)/%.c
 	-mkdir -p $(ODIR)
 	gcc $(OPTS) -c $< -o $@
 
