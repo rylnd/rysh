@@ -1,16 +1,23 @@
-SRCS = rysh.c
-OBJS = $(SRCS:.c=.o)
-CC   = gcc
+SDIR = src
+ODIR = obj
+TARGET = rysh
+SRC = rysh.c
+OBJ = rysh.o
 OPTS = -Wall -D_GNU_SOURCE
 
-all: rysh
+all: $(TARGET)
 
-%.o: %.c
+$(TARGET) : $(ODIR)/$(OBJ)
+	gcc -o $(TARGET) $< -Wall
+
+$(ODIR)/$(OBJ) : $(ODIR)/%.o : $(SDIR)/%.c
+	-mkdir -p $(ODIR)
 	gcc $(OPTS) -c $< -o $@
 
-rysh: $(OBJS)
-	gcc -o rysh $(OBJS) -Wall
-
 clean:
-	rm -f $(OBJS) main
+	rm -rf $(TARGET) $(ODIR)
 
+.PHONY: all test clean
+
+test:
+	./run_all_tests.csh

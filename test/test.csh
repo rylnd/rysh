@@ -6,8 +6,8 @@ if ($#argv != 1) then
 endif
 
 set test_nr=$1
-set test_input_dir="/afs/cs.wisc.edu/p/course/cs537-remzi/ta/p2/test_data/"
-set test_out_dir="/afs/cs.wisc.edu/p/course/cs537-remzi/ta/p2/output/"
+set test_input_dir="./test/data/"
+set test_out_dir="./test/output/"
 
 switch($test_nr)
 case 1:
@@ -24,19 +24,19 @@ case 1:
     endif
 breaksw
 case 2:
-    rm -f myshell
+    rm -f rysh
     make >& /dev/null
-    if (! -f myshell) then
+    if (! -f rysh) then
            echo "ERROR: not compilable using make"
            goto fail
     endif
 breaksw
 case 3:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    (./myshell test1 test2 > /dev/null) >& test${test_nr}.err
+    (./rysh test1 test2 > /dev/null) >& test${test_nr}.err
     if($status == 139) then
        goto fail
     endif
@@ -47,11 +47,11 @@ case 3:
     endif
 breaksw
 case 4:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    (./myshell invalid_input_file_xyz > /dev/null) >& test${test_nr}.err
+    (./rysh invalid_input_file_xyz > /dev/null) >& test${test_nr}.err
     if($status == 139) then
        goto fail
     endif
@@ -73,11 +73,11 @@ case 34:
 case 35:
 case 22:
 case 30:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    (./myshell ${test_input_dir}test${test_nr} > /dev/null) >& test${test_nr}.err
+    (./rysh ${test_input_dir}test${test_nr} > /dev/null) >& test${test_nr}.err
     if($status == 139) then
        goto fail
     endif
@@ -87,11 +87,11 @@ case 30:
     endif
 breaksw
 case 12:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    (./myshell ${test_input_dir}test${test_nr} > test${test_nr}.out) >& test${test_nr}.err
+    (./rysh ${test_input_dir}test${test_nr} > test${test_nr}.out) >& test${test_nr}.err
     if($status == 139) then
        goto fail
     endif
@@ -106,11 +106,11 @@ case 12:
 breaksw
 
 case 10:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    (./myshell ${test_input_dir}test${test_nr} > /dev/null) >& test${test_nr}.out
+    (./rysh ${test_input_dir}test${test_nr} > /dev/null) >& test${test_nr}.out
     if ($status != 0) then
         goto fail
     else
@@ -132,12 +132,12 @@ case 16:
 case 17:
 case 18:
 case 19:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
     /bin/csh -f ${test_input_dir}test${test_nr}.csh >& test${test_nr}.csh.out
-    ./myshell ${test_input_dir}test${test_nr} >& test${test_nr}.out
+    ./rysh ${test_input_dir}test${test_nr} >& test${test_nr}.out
     if ($status != 0) then
        goto fail
     endif
@@ -150,11 +150,11 @@ case 20:
 case 21:
 case 26:
 case 27:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
-    rm -f out1 out2 out3 out1.cshell out2.cshell out3.cshell   
+    rm -f out1 out2 out3 out1.cshell out2.cshell out3.cshell
     /bin/csh -f ${test_input_dir}test${test_nr}.csh >& test${test_nr}.csh.out
     if(-f out1) then
         mv out1 out1.cshell
@@ -165,7 +165,7 @@ case 27:
     if(-f out3) then
         mv out3 out3.cshell
     endif
-    ./myshell ${test_input_dir}test${test_nr} >& test${test_nr}.out
+    ./rysh ${test_input_dir}test${test_nr} >& test${test_nr}.out
     if($status != 0) then
         goto fail
     endif
@@ -191,14 +191,14 @@ case 27:
 breaksw
 case 29:
 case 36:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
     rm -f out1.gz
     /bin/csh -f ${test_input_dir}test${test_nr}.csh >& /dev/null
     mv out1.gz out1.cshell.gz
-    ./myshell ${test_input_dir}test${test_nr} >& /dev/null
+    ./rysh ${test_input_dir}test${test_nr} >& /dev/null
     if($status != 0) then
        goto fail
     endif
@@ -217,15 +217,15 @@ case 36:
     endif
 breaksw
 case 37:
-    if(! -f myshell) then
-       echo "Please compile myshell before running this Test"
+    if(! -f rysh) then
+       echo "Please compile rysh before running this Test"
        goto fail
     endif
     rm -f out1.gz
     /bin/csh -f ${test_input_dir}test${test_nr}.csh >& /dev/null
     mv out1.gz out1.cshell.gz
     mv out2.gz out2.cshell.gz
-    ./myshell ${test_input_dir}test${test_nr} >& /dev/null
+    ./rysh ${test_input_dir}test${test_nr} >& /dev/null
     if($status != 0) then
        goto fail
     endif
@@ -324,4 +324,4 @@ fail:
    rm -f out1.gz out2.gz out1.cshell.gz out2.cshell.gz
    echo "Test ${test_nr}: Fail"
    exit 1
- 
+
