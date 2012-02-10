@@ -1,2 +1,2 @@
-echo "./myprog ; cd ; date"
-./myprog ; cd ; date
+echo "./test/testprog ; cd ; date"
+./test/testprog ; cd ; date

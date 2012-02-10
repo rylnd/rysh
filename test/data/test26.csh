@@ -1,2 +1,2 @@
-echo "pwd ; ./myprog 20 6 > out1"
-pwd ; ./myprog 20 6 > out1
+echo "pwd ; ./test/testprog 20 6 > out1"
+pwd ; ./test/testprog 20 6 > out1

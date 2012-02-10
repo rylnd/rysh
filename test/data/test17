@@ -1,1 +1,1 @@
-./myprog ; cd ; date
+./test/testprog ; cd ; date
