@@ -338,7 +338,6 @@ int main(int argc, char *argv[])
         cmd = strtok(NULL, ";");
         cmds[q] = cmd;
         q++;
-        //printf("q:%d\n", q);
       }
       q--;
     }
@@ -347,15 +346,10 @@ int main(int argc, char *argv[])
       char* temp = strtok(cmds[k], " \t\n");
       commands[0] = temp;
       int j = 1;
-      //printf("i:%d \t%s\n", 0,  commands[0]);
+
       while(temp != NULL){
         temp = strtok(NULL, " \t\n");
-        //printf("com[%d]: %*.*s\n",i, len, len, tok);
         commands[j] = temp;
-        //printf("i:%d \t%s\n", j,  commands[j]);
-
-        //printf("temp size: %d\n", strlen(temp));
-        //printf("isize: %d\n", i);
         j++;
       }
 
@@ -370,8 +364,7 @@ int main(int argc, char *argv[])
 
     }
 
-    if(!file)printf("rysh> ");
-    //printf("%s\n", tok);
+      if(!file)printf("rysh> ");
     }
   }
 
