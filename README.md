@@ -6,13 +6,18 @@ Why use a well-written shell when you can roll your own?
 
 ## Compiling
 
-Comes with a (as yet incomplete) Makefile.
-
     $ make
 
-### Usage
+## Usage
     $ ./rysh
     rysh> ls
+
+## Testing
+    $ make testall
+Runs all tests, outputs score
+
+    $ make n=<num> test
+Runs the specific test number `num`
 
 ## Notes
 
