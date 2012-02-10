@@ -322,6 +322,5 @@ fail:
           rm -f out3
    endif
    rm -f out1.gz out2.gz out1.cshell.gz out2.cshell.gz
-   echo "Test ${test_nr}: Fail"
    exit 1
 
