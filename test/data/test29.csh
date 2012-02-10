@@ -1,1 +1,1 @@
-cal | /bin/gzip > out1.gz
+cal | `which gzip` > out1.gz
