@@ -1,4 +1,4 @@
-echo "cd /afs/cs.wisc.edu/p/course/cs537-remzi"
-cd /afs/cs.wisc.edu/p/course/cs537-remzi
+echo "cd /usr/bin"
+cd /usr/bin
 echo "pwd"
 pwd
