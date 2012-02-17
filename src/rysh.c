@@ -14,9 +14,16 @@ typedef struct {
 
 }simPair;
 
+static int lastError = 0;
+
+void clearError(){
+  lastError = 0;
+}
+
 void printError(){
   char error_message[30] = "An error has occurred\n";
   write(STDERR_FILENO, error_message, strlen(error_message));
+  lastError = 1;
 }
 
 // NEEDED ON 10.6, strndup not built in
@@ -52,12 +59,11 @@ void red(char* cmd[], int loc, int index, int len){
 
   char* curr = cmd[index];
   char* file = NULL;
-  int flag=0;
+  clearError();
 
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
-      flag = 1;
     }
 
   }
@@ -65,29 +71,25 @@ void red(char* cmd[], int loc, int index, int len){
     if(cmd[index+1] != NULL){
       if(cmd[index+2]!=NULL){
         printError();
-        flag = 1;
       }
       else
         file = cmd[index+1];
     }
     else{
       printError();
-      flag = 1;
     }
     if(cmd[index - 1]==NULL){
       printError();
-      flag = 1;
     }
 
   }
   else if(index ==0){//first token
     if(loc==0){//first char
       printError();
-      flag = 1;
     }
   }
 
-  if(flag==0){//no error, need file
+  if(!lastError){//no error, need file
     if(file==NULL){
       file = strndup(curr + (loc+1), strlen(curr) - (loc+1));
     }
@@ -121,14 +123,13 @@ void zip(char* cmd[], int loc, int index, int len){
 
   char* curr = cmd[index];
   char* file = NULL;
-  int flag=0;
   int fds[2];
 
+  clearError();
 
   if(index == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
-      flag = 1;
     }
 
   }
@@ -136,29 +137,25 @@ void zip(char* cmd[], int loc, int index, int len){
     if(cmd[index+1] != NULL){
       if(cmd[index+2]!=NULL){
         printError();
-        flag = 1;
       }
       else
         file = cmd[index+1];
     }
     else{
       printError();
-      flag = 1;
     }
     if(cmd[index - 1]==NULL){
       printError();
-      flag = 1;
     }
 
   }
   else if(index ==0){//first token
     if(loc==0){//first char
       printError();
-      flag = 1;
     }
   }
 
-  if(flag==0){//no error, need file
+  if(!lastError){//no error, need file
     if(file==NULL){
       file = strndup(curr + (loc+1), strlen(curr) - (loc+1));
       //check if exists
@@ -212,7 +209,7 @@ void forkCmd(char* cmd[]){
     wait(NULL);
   }
   else
-  printError();
+    printError();
 }
 
 
