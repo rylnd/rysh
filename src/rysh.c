@@ -66,33 +66,33 @@ void redirect(char* cmd[], int loc, int idx, int len) {
     }
   }
   else if (strlen(curr) - 1 == loc) { // not last token, but end of token
-    if (cmd[idx + 1] != NULL) {
-      if (cmd[idx + 2] != NULL) {
+    if (cmd[idx + 1]) {
+      if (cmd[idx + 2]) {
         printError();
       }
       else { file = cmd[idx + 1]; }
     }
     else { printError(); }
 
-    if (cmd[idx - 1] == NULL) {
+    if (!cmd[idx - 1]) {
       printError();
     }
 
   }
-  else if (idx == 0) { // first token
-    if (loc == 0) { // first char
+  else if (!idx) { // first token
+    if (!loc) { // first char
       printError();
     }
   }
 
   if (!lastError) { // no error, need file
-    if (file == NULL) {
+    if (!file) {
       file = strndup(curr + (loc + 1), strlen(curr) - (loc + 1));
     }
     // DUP2 HANDLING*****
     int rd = fork();
 
-    if (rd == 0) { // Child
+    if (!rd) { // Child
       close(STDOUT_FILENO);
       int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
       if (f == -1) {
@@ -128,35 +128,34 @@ void zip(char* cmd[], int loc, int idx, int len) {
     }
   }
   else if (strlen(curr) - 1 == loc) { // not last token, but end of token
-    if (cmd[idx + 1] != NULL) {
-      if (cmd[idx + 2] != NULL) {
+    if (cmd[idx + 1]) {
+      if (cmd[idx + 2]) {
         printError();
       }
       else { file = cmd[idx + 1]; }
     }
     else { printError(); }
 
-    if (cmd[idx - 1] == NULL) {
+    if (!cmd[idx - 1]) {
       printError();
     }
   }
-  else if (idx == 0) { // first token
-    if (loc == 0) { // first char
+  else if (!idx) { // first token
+    if (!loc) { // first char
       printError();
     }
   }
 
   if (!lastError) { // no error, need file
-    if (file == NULL) {
+    if (!file) {
       file = strndup(curr + (loc + 1), strlen(curr) - (loc + 1));
-      // check if exists
     }
 
     int rd = fork();
     pipe(fds);
-    if (rd == 0) { // child 1
+    if (!rd) { // child 1
       int rd2 = fork();
-      if (rd2 == 0) { // child 2
+      if (!rd2) { // child 2
         close(fds[0]); // close stdout
         dup2(fds[1], STDOUT_FILENO);
         cmd[idx] = NULL;
@@ -191,7 +190,7 @@ void forkCmd(char* cmd[]) {
 
   int rd = fork();
 
-  if (rd == 0) { // Child
+  if (!rd) { // Child
     execvp(cmd[0], cmd);
     printError();
     exit(1);
@@ -207,35 +206,33 @@ void runCmd(char* cmd[], int len, int output) {
 
   char buffer[4096];
 
-  if (strcmp("exit", cmd[0]) == 0) {
-    if (cmd[1] == NULL)exit(0);
+  if (!strcmp("exit", cmd[0])) {
+    if (!cmd[1]) { exit(0); }
     else { printError(); }
   }
-  else if (strcmp("pwd", cmd[0]) == 0) {
-    char* err = getcwd(buffer,4096);
-    if (err == NULL) {
+  else if (!strcmp("pwd", cmd[0])) {
+    char* result = getcwd(buffer,4096);
+    if (!result) {
       printError();
       exit(1);
     }
-    if (cmd[1] != NULL) { printError(); }
+    if (cmd[1]) { printError(); }
     else {
       char *nl = strdup("\n");
       write(output, buffer, strlen(buffer));
       write(output, nl , strlen(nl));
     }
   }
-  else if (strcmp("cd", cmd[0]) == 0) {
-    int err;
+  else if (!strcmp("cd", cmd[0])) {
     char* dir;
-    if (cmd[1] == NULL) {
+    if (!cmd[1]) {
       dir = getenv("HOME");
-      err = chdir(dir);
     }
     else {
       dir = cmd[1];
-      err = chdir(dir);
     }
-    if (err != 0) { printError(); }
+
+    if (chdir(dir)) { printError(); }
   }
   else { // NOT BUILT-IN
 
@@ -252,9 +249,9 @@ void runCmd(char* cmd[], int len, int output) {
       zipc = strchr(cmd[l], ':');
       redc = strchr(cmd[l], '>');
 
-      if (zipc != NULL) { // HAS ZIP
+      if (zipc) { // HAS ZIP
         zipf++;
-        if (redc != NULL) {
+        if (redc) {
           err = 1;
           redf++;
         }
@@ -262,7 +259,7 @@ void runCmd(char* cmd[], int len, int output) {
           zip(cmd, zipc - cmd[l], l, len - 1);
         }
       }
-      else if (redc != NULL) { // HAS REDIRECT, NO ZIP
+      else if (redc) { // HAS REDIRECT, NO ZIP
         redf++;
         if (redf == 1) {
           redirect(cmd, redc - cmd[l], l, len - 1);
@@ -271,7 +268,7 @@ void runCmd(char* cmd[], int len, int output) {
       else { forkc++; }
     }
 
-    if (zipf == 0 && redf == 0) {
+    if (!zipf && !redf) {
       forkCmd(cmd);
     }
   }
@@ -291,7 +288,7 @@ int main(int argc, char *argv[]) {
   }
   else {
     input = fopen(argv[1], "r");
-    if (input == NULL) {
+    if (!input) {
       printError();
       exit(1);
     }
@@ -318,14 +315,14 @@ int main(int argc, char *argv[]) {
       char* cmds[1024];
       int q = 1;
       if (file)write(STDOUT_FILENO, buffer, strlen(buffer));
-      if (strchr(buffer, ';') == NULL) {
+      if (!strchr(buffer, ';')) {
         cmds[0] = buffer;
         q = 1;
       }
       else {
         char* cmd = strtok(buffer, ";");
         cmds[0] = cmd;
-        while (cmd != NULL) {
+        while (cmd) {
           cmd = strtok(NULL, ";");
           cmds[q] = cmd;
           q++;
@@ -338,13 +335,13 @@ int main(int argc, char *argv[]) {
         commands[0] = temp;
         int j = 1;
 
-        while (temp != NULL) {
+        while (temp) {
           temp = strtok(NULL, " \t\n");
           commands[j] = temp;
           j++;
         }
 
-        if (commands[0] != NULL) {
+        if (commands[0]) {
           commands[j] = NULL;
           runCmd(commands, j, OUTPUT);
         }
