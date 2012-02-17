@@ -55,35 +55,34 @@ int isMult(char* tok){
 */
 
 //HANDLE REDIRECTS
-void red(char* cmd[], int loc, int index, int len){
+void redirect(char* cmd[], int loc, int idx, int len){
 
-  char* curr = cmd[index];
+  char* curr = cmd[idx];
   char* file = NULL;
   clearError();
 
-  if(index == len-1){//last token has >
+  if(idx == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
     }
-
   }
   else if(strlen(curr)-1==loc){//not last token, but end of token
-    if(cmd[index+1] != NULL){
-      if(cmd[index+2]!=NULL){
+    if(cmd[idx+1] != NULL){
+      if(cmd[idx+2]!=NULL){
         printError();
       }
       else
-        file = cmd[index+1];
+        file = cmd[idx+1];
     }
     else{
       printError();
     }
-    if(cmd[index - 1]==NULL){
+    if(cmd[idx - 1]==NULL){
       printError();
     }
 
   }
-  else if(index ==0){//first token
+  else if(idx ==0){//first token
     if(loc==0){//first char
       printError();
     }
@@ -103,7 +102,7 @@ void red(char* cmd[], int loc, int index, int len){
         printError();
       }
       else{
-        cmd[index] = NULL;
+        cmd[idx] = NULL;
         execvp(cmd[0], cmd);
         printError();
         exit(1);
@@ -119,37 +118,37 @@ void red(char* cmd[], int loc, int index, int len){
   }
 }
   //HANDLE ZIPS
-void zip(char* cmd[], int loc, int index, int len){
+void zip(char* cmd[], int loc, int idx, int len){
 
-  char* curr = cmd[index];
+  char* curr = cmd[idx];
   char* file = NULL;
   int fds[2];
 
   clearError();
 
-  if(index == len-1){//last token has >
+  if(idx == len-1){//last token has >
     if((strlen(curr)-1)==loc){//last char >, error
       printError();
     }
 
   }
   else if(strlen(curr)-1==loc){//not last token, but end of token
-    if(cmd[index+1] != NULL){
-      if(cmd[index+2]!=NULL){
+    if(cmd[idx+1] != NULL){
+      if(cmd[idx+2]!=NULL){
         printError();
       }
       else
-        file = cmd[index+1];
+        file = cmd[idx+1];
     }
     else{
       printError();
     }
-    if(cmd[index - 1]==NULL){
+    if(cmd[idx - 1]==NULL){
       printError();
     }
 
   }
-  else if(index ==0){//first token
+  else if(idx ==0){//first token
     if(loc==0){//first char
       printError();
     }
@@ -168,7 +167,7 @@ void zip(char* cmd[], int loc, int index, int len){
       if(rd2 == 0){//child 2
         close(fds[0]);//close stdout
         dup2(fds[1], STDOUT_FILENO);
-        cmd[index] = NULL;
+        cmd[idx] = NULL;
         execvp(cmd[0], cmd);
         printError();
         exit(1);
@@ -269,10 +268,10 @@ void runCmd(char* cmd[], int len, int output){
           zip(cmd, zipc-cmd[l], l, len-1);
         }
       }
-      else if (redc != NULL){//HAS RED, NO ZIP
+      else if (redc != NULL){//HAS REDIRECT, NO ZIP
         redf++;
         if(redf==1){
-          red(cmd, redc-cmd[l], l, len-1);
+          redirect(cmd, redc-cmd[l], l, len-1);
         }
       }
       else{forkc++;}
