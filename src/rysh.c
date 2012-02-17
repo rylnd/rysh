@@ -354,17 +354,13 @@ int main(int argc, char *argv[])
       }
 
 
-      if(commands[0]==NULL){
-        //printError();
+      if(commands[0] != NULL){
+        commands[j] = NULL;
+        runCmd(commands, j, OUTPUT);
       }
-      else{
-      commands[j] = NULL;
-      runCmd(commands, j, OUTPUT);
-      }
-
     }
 
-      if(!file)printf("rysh> ");
+    if(!file)printf("rysh> ");
     }
   }
 
