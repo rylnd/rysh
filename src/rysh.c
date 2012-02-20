@@ -54,27 +54,27 @@ int isMult(char* tok) {
 }
 */
 
-int checkArguments(char* cmd[], int loc, int idx, int len) {
-  char* operand = cmd[idx];
+int checkArguments(char* cmds[], int loc, int operand_index, int num_cmds) {
+  char* operand = cmds[operand_index];
 
-  if (idx == len - 1) { // last token has >
+  if (operand_index == num_cmds - 1) { // last token has >
     if (strlen(operand) - 1 == loc) { // last char >, error
       printError();
     }
   }
-  else if (!idx && !loc) { // operand is not preceded by anything
+  else if (!operand_index && !loc) { // operand is not preceded by anything
     printError();
   }
   else if (strlen(operand) - 1 == loc) { // not last token, but end of token
-    if (cmd[idx + 1]) {
-      if (cmd[idx + 2]) {
+    if (cmds[operand_index + 1]) {
+      if (cmds[operand_index + 2]) {
         printError();
       }
       else { return 1; }
     }
     else { printError(); }
 
-    if (!cmd[idx - 1]) {
+    if (!cmds[operand_index - 1]) {
       printError();
     }
   }
@@ -83,19 +83,19 @@ int checkArguments(char* cmd[], int loc, int idx, int len) {
 }
 
 // HANDLE REDIRECTS
-void redirect(char* cmd[], int loc, int idx, int len) {
+void redirect(char* cmds[], int loc, int redir_index, int num_cmds) {
 
-  char* curr = cmd[idx];
+  char* redir_char = cmds[redir_index];
   char* file = NULL;
   clearError();
 
-  if (checkArguments(cmd, loc, idx, len)) {
-    file = cmd[idx + 1];
+  if (checkArguments(cmds, loc, redir_index, num_cmds)) {
+    file = cmds[redir_index + 1];
   }
 
   if (!lastError) { // no error, need file
     if (!file) {
-      file = strndup(curr + (loc + 1), strlen(curr) - (loc + 1));
+      file = strndup(redir_char + (loc + 1), strlen(redir_char) - (loc + 1));
     }
     // DUP2 HANDLING*****
     int rd = fork();
@@ -107,8 +107,8 @@ void redirect(char* cmd[], int loc, int idx, int len) {
         printError();
       }
       else {
-        cmd[idx] = NULL;
-        execvp(cmd[0], cmd);
+        cmds[redir_index] = NULL;
+        execvp(cmds[0], cmds);
         printError();
         exit(1);
       }
@@ -121,16 +121,16 @@ void redirect(char* cmd[], int loc, int idx, int len) {
 }
 
 // HANDLE ZIPS
-void zip(char* cmd[], int loc, int idx, int len) {
+void zip(char* cmds[], int loc, int zip_index, int num_cmds) {
 
-  char* curr = cmd[idx];
+  char* curr = cmds[zip_index];
   char* file = NULL;
   int fds[2];
 
   clearError();
 
-  if (checkArguments(cmd, loc, idx, len)) {
-    file = cmd[idx + 1];
+  if (checkArguments(cmds, loc, zip_index, num_cmds)) {
+    file = cmds[zip_index + 1];
   }
 
   if (!lastError) { // no error, need file
@@ -145,8 +145,8 @@ void zip(char* cmd[], int loc, int idx, int len) {
       if (!rd2) { // child 2
         close(fds[0]); // close stdout
         dup2(fds[1], STDOUT);
-        cmd[idx] = NULL;
-        execvp(cmd[0], cmd);
+        cmds[zip_index] = NULL;
+        execvp(cmds[0], cmds);
         printError();
         exit(1);
       }
@@ -173,12 +173,12 @@ void zip(char* cmd[], int loc, int idx, int len) {
   }
 }
 
-void forkCmd(char* cmd[]) {
+void forkCmd(char* cmds[]) {
 
   int rd = fork();
 
   if (!rd) { // Child
-    execvp(cmd[0], cmd);
+    execvp(cmds[0], cmds);
     printError();
     exit(1);
   }
@@ -189,70 +189,69 @@ void forkCmd(char* cmd[]) {
 }
 
 // HANDLE OTHERS
-void runCmd(char* cmd[], int len, int output) {
+void runCmd(char* cmds[], int cmd_count, int output) {
 
   char buffer[4096];
 
-  if (!strcmp("exit", cmd[0])) {
-    if (!cmd[1]) { exit(0); }
+  if (!strcmp("exit", cmds[0])) {
+    if (!cmds[1]) { exit(0); }
     else { printError(); }
   }
-  else if (!strcmp("pwd", cmd[0])) {
+  else if (!strcmp("pwd", cmds[0])) {
     char* result = getcwd(buffer,4096);
     if (!result) {
       printError();
       exit(1);
     }
-    if (cmd[1]) { printError(); }
+    if (cmds[1]) { printError(); }
     else {
-      char *nl = strdup("\n");
+      char *newline = strdup("\n");
       write(output, buffer, strlen(buffer));
-      write(output, nl , strlen(nl));
+      write(output, newline , strlen(newline));
     }
   }
-  else if (!strcmp("cd", cmd[0])) {
+  else if (!strcmp("cd", cmds[0])) {
     char* dir;
-    if (!cmd[1]) {
+    if (!cmds[1]) {
       dir = getenv("HOME");
     }
     else {
-      dir = cmd[1];
+      dir = cmds[1];
     }
 
     if (chdir(dir)) { printError(); }
   }
   else { // NOT BUILT-IN
 
-    // CHECK for redirects
-    int l;
-    int redf = 0;
-    int zipf = 0;
-    char* red_index;
+    int cmd_number;
+    int num_redirects = 0;
+    int num_zips = 0;
+    char* redir_index;
     char* zip_index;
 
-    for (l = 0; l < len - 1; l++) {
-      zip_index = strchr(cmd[l], ':');
-      red_index = strchr(cmd[l], '>');
+    for (cmd_number = 0; cmd_number < cmd_count; cmd_number++) {
+      zip_index = strchr(cmds[cmd_number], ':');
+      redir_index = strchr(cmds[cmd_number], '>');
 
       if (zip_index) { // HAS ZIP
-        zipf++;
-        if (red_index) {
-          redf++;
+        num_zips++;
+        if (redir_index) {
+          num_redirects++;
         }
-        else if (zipf == 1) {
-          zip(cmd, zip_index - cmd[l], l, len - 1);
+        else if (num_zips == 1) {
+          zip(cmds, zip_index - cmds[cmd_number], cmd_number, cmd_count);
         }
       }
-      else if (red_index) { // HAS REDIRECT, NO ZIP
-        redf++;
-        if (redf == 1) {
-          redirect(cmd, red_index - cmd[l], l, len - 1);
+      else if (redir_index) { // HAS REDIRECT, NO ZIP
+        num_redirects++;
+        if (num_redirects == 1) {
+          redirect(cmds, redir_index - cmds[cmd_number], cmd_number, cmd_count);
         }
       }
     }
 
-    if (!zipf && !redf) {
-      forkCmd(cmd);
+    if (!num_zips && !num_redirects) {
+      forkCmd(cmds);
     }
   }
 }
@@ -309,16 +308,16 @@ int main(int argc, char *argv[]) {
       for (k = 0; k <= numCmds; k++) { // split by whitespace
         char* temp = strtok(cmdTokens[k], " \t\n");
         commands[0] = temp;
-        int j = 1;
+        int cmd_count = 1;
 
         while (temp) {
           temp = strtok(NULL, " \t\n");
-          commands[j++] = temp;
+          commands[cmd_count++] = temp;
         }
 
         if (commands[0]) {
-          commands[j] = NULL;
-          runCmd(commands, j, STDOUT);
+          commands[cmd_count] = NULL;
+          runCmd(commands, cmd_count - 1, STDOUT);
         }
       }
 
