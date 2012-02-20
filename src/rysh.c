@@ -303,19 +303,19 @@ int main(int argc, char *argv[]) {
   if (!file) { printf("rysh> "); }
 
   while (fgets(buffer, sizeof(buffer), input)) {
+
+    if (file) { write(STDOUT, buffer, strlen(buffer)); }
+
     if (strlen(buffer) > 512) {
       printError();
-      if (file) { write(STDOUT, buffer, strlen(buffer)); }
     }
     else {
       // SPLIT UP STRING
       // FIRST, by ;
       char* cmds[1024];
       int q = 1;
-      if (file) { write(STDOUT, buffer, strlen(buffer)); }
       if (!strchr(buffer, ';')) {
         cmds[0] = buffer;
-        q = 1;
       }
       else {
         char* cmd = strtok(buffer, ";");
