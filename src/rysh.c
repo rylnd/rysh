@@ -227,32 +227,28 @@ void runCmd(char* cmd[], int len, int output) {
     int l;
     int redf = 0;
     int zipf = 0;
-    int err = 0;
-    char* redc;
-    char* zipc;
-    int forkc = 0;
+    char* red_index;
+    char* zip_index;
 
     for (l = 0; l < len - 1; l++) {
-      zipc = strchr(cmd[l], ':');
-      redc = strchr(cmd[l], '>');
+      zip_index = strchr(cmd[l], ':');
+      red_index = strchr(cmd[l], '>');
 
-      if (zipc) { // HAS ZIP
+      if (zip_index) { // HAS ZIP
         zipf++;
-        if (redc) {
-          err = 1;
+        if (red_index) {
           redf++;
         }
         else if (zipf == 1) {
-          zip(cmd, zipc - cmd[l], l, len - 1);
+          zip(cmd, zip_index - cmd[l], l, len - 1);
         }
       }
-      else if (redc) { // HAS REDIRECT, NO ZIP
+      else if (red_index) { // HAS REDIRECT, NO ZIP
         redf++;
         if (redf == 1) {
-          redirect(cmd, redc - cmd[l], l, len - 1);
+          redirect(cmd, red_index - cmd[l], l, len - 1);
         }
       }
-      else { forkc++; }
     }
 
     if (!zipf && !redf) {
