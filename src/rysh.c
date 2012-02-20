@@ -54,6 +54,34 @@ int isMult(char* tok) {
 }
 */
 
+int checkArguments(char* cmd[], int loc, int idx, int len) {
+  char* operand = cmd[idx];
+
+  if (idx == len - 1) { // last token has >
+    if (strlen(operand) - 1 == loc) { // last char >, error
+      printError();
+    }
+  }
+  else if (!idx && !loc) { // operand is not preceded by anything
+    printError();
+  }
+  else if (strlen(operand) - 1 == loc) { // not last token, but end of token
+    if (cmd[idx + 1]) {
+      if (cmd[idx + 2]) {
+        printError();
+      }
+      else { return 1; }
+    }
+    else { printError(); }
+
+    if (!cmd[idx - 1]) {
+      printError();
+    }
+  }
+
+  return 0;
+}
+
 // HANDLE REDIRECTS
 void redirect(char* cmd[], int loc, int idx, int len) {
 
@@ -61,29 +89,8 @@ void redirect(char* cmd[], int loc, int idx, int len) {
   char* file = NULL;
   clearError();
 
-  if (idx == len - 1) { // last token has >
-    if (strlen(curr) - 1 == loc ) { // last char >, error
-      printError();
-    }
-  }
-  else if (strlen(curr) - 1 == loc) { // not last token, but end of token
-    if (cmd[idx + 1]) {
-      if (cmd[idx + 2]) {
-        printError();
-      }
-      else { file = cmd[idx + 1]; }
-    }
-    else { printError(); }
-
-    if (!cmd[idx - 1]) {
-      printError();
-    }
-
-  }
-  else if (!idx) { // first token
-    if (!loc) { // first char
-      printError();
-    }
+  if (checkArguments(cmd, loc, idx, len)) {
+    file = cmd[idx + 1];
   }
 
   if (!lastError) { // no error, need file
@@ -122,28 +129,8 @@ void zip(char* cmd[], int loc, int idx, int len) {
 
   clearError();
 
-  if (idx == len - 1) { // last token has >
-    if (strlen(curr) - 1 == loc) { // last char >, error
-      printError();
-    }
-  }
-  else if (strlen(curr) - 1 == loc) { // not last token, but end of token
-    if (cmd[idx + 1]) {
-      if (cmd[idx + 2]) {
-        printError();
-      }
-      else { file = cmd[idx + 1]; }
-    }
-    else { printError(); }
-
-    if (!cmd[idx - 1]) {
-      printError();
-    }
-  }
-  else if (!idx) { // first token
-    if (!loc) { // first char
-      printError();
-    }
+  if (checkArguments(cmd, loc, idx, len)) {
+    file = cmd[idx + 1];
   }
 
   if (!lastError) { // no error, need file
