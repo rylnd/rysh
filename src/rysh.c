@@ -105,7 +105,6 @@ void redirect(char* cmd[], int loc, int idx, int len) {
         exit(1);
       }
     }
-
     else if (rd > 0) { // Parent
       wait(NULL);
     }
@@ -279,20 +278,21 @@ int main(int argc, char *argv[]) {
   FILE *input;
   int file = 0;
 
-  if (argc != 1 && argc != 2) {
-    printError();
-    exit(1);
-  }
-  else if (argc == 1) {
-    input = stdin;
-  }
-  else {
-    input = fopen(argv[1], "r");
-    if (!input) {
+  switch (argc) {
+    case 1:
+      input = stdin;
+      break;
+    case 2:
+      input = fopen(argv[1], "r");
+      if (!input) {
+        printError();
+        exit(1);
+      }
+      file = 1;
+      break;
+    default:
       printError();
       exit(1);
-    }
-    else { file = 1; }
   }
 
   int BUF_SIZE = 4096;
