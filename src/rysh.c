@@ -15,6 +15,7 @@ typedef struct {
 }simPair;
 
 static int lastError = 0;
+static int STDOUT = STDOUT_FILENO;
 
 void clearError() { lastError = 0; }
 
@@ -93,7 +94,7 @@ void redirect(char* cmd[], int loc, int idx, int len) {
     int rd = fork();
 
     if (!rd) { // Child
-      close(STDOUT_FILENO);
+      close(STDOUT);
       int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
       if (f == -1) {
         printError();
@@ -156,7 +157,7 @@ void zip(char* cmd[], int loc, int idx, int len) {
       int rd2 = fork();
       if (!rd2) { // child 2
         close(fds[0]); // close stdout
-        dup2(fds[1], STDOUT_FILENO);
+        dup2(fds[1], STDOUT);
         cmd[idx] = NULL;
         execvp(cmd[0], cmd);
         printError();
@@ -165,7 +166,7 @@ void zip(char* cmd[], int loc, int idx, int len) {
       else if (rd2 > 0) { // parent 2
         wait(NULL);
         close(fds[1]);
-        close(STDOUT_FILENO);
+        close(STDOUT);
         int f = open(file, O_WRONLY|O_CREAT, S_IRWXU);
         if (f == -1) {
           printError();
@@ -296,7 +297,6 @@ int main(int argc, char *argv[]) {
   }
 
   int BUF_SIZE = 4096;
-  int OUTPUT = STDOUT_FILENO;
   char buffer[BUF_SIZE];
   char *commands[1024];
 
@@ -304,17 +304,15 @@ int main(int argc, char *argv[]) {
 
   while (fgets(buffer, sizeof(buffer), input)) {
     if (strlen(buffer) > 512) {
-      if (file) {
-        write(STDOUT_FILENO, buffer, strlen(buffer));
-      }
       printError();
+      if (file) { write(STDOUT, buffer, strlen(buffer)); }
     }
     else {
       // SPLIT UP STRING
       // FIRST, by ;
       char* cmds[1024];
       int q = 1;
-      if (file)write(STDOUT_FILENO, buffer, strlen(buffer));
+      if (file) { write(STDOUT, buffer, strlen(buffer)); }
       if (!strchr(buffer, ';')) {
         cmds[0] = buffer;
         q = 1;
@@ -343,7 +341,7 @@ int main(int argc, char *argv[]) {
 
         if (commands[0]) {
           commands[j] = NULL;
-          runCmd(commands, j, OUTPUT);
+          runCmd(commands, j, STDOUT);
         }
       }
 
