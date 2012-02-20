@@ -309,34 +309,28 @@ int main(int argc, char *argv[]) {
     if (strlen(buffer) > 512) {
       printError();
     }
-    else {
-      // SPLIT UP STRING
-      // FIRST, by ;
-      char* cmds[1024];
-      int q = 1;
+    else { // split by semicolon
+      char* cmdTokens[1024];
+      int numCmds = 0;
       if (!strchr(buffer, ';')) {
-        cmds[0] = buffer;
+        cmdTokens[0] = buffer;
       }
       else {
-        char* cmd = strtok(buffer, ";");
-        cmds[0] = cmd;
-        while (cmd) {
-          cmd = strtok(NULL, ";");
-          cmds[q] = cmd;
-          q++;
+        char* token = strtok(buffer, ";");
+        while (token) {
+          cmdTokens[numCmds++] = token;
+          token = strtok(NULL, ";");
         }
-        q--;
       }
       int k;
-      for (k = 0; k < q; k++) { //EACH COMMAND ON LINE
-        char* temp = strtok(cmds[k], " \t\n");
+      for (k = 0; k <= numCmds; k++) { // split by whitespace
+        char* temp = strtok(cmdTokens[k], " \t\n");
         commands[0] = temp;
         int j = 1;
 
         while (temp) {
           temp = strtok(NULL, " \t\n");
-          commands[j] = temp;
-          j++;
+          commands[j++] = temp;
         }
 
         if (commands[0]) {
