@@ -17,10 +17,4 @@ $(ODIR)/%.o : $(SDIR)/%.c
 clean:
 	rm -rf $(TARGET) $(ODIR)
 
-.PHONY: all test testall clean
-
-testall:
-	./run_all_tests.csh
-
-test:
-	./test/test.csh $(n)
+.PHONY: all clean

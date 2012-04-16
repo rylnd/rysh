@@ -1,1 +1,0 @@
-./test/testprog 234 123 : out1.gz ; cat test.csh : out2.gz
