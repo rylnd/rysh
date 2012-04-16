@@ -1,12 +1,10 @@
 #!/bin/csh -f
 
-set i=1
-set max_test_nr=37
 set values=(4 4 3 3 3 3 4 2 4 4 4 4 4 4 2 2 10 4 2 5 3 1 1 1 1 4 3 1 2 1 1 1 1 1 1 1 1)
 set failing_tests=()
 set score=0
 
-while (${i} <= ${max_test_nr} )
+foreach i (1 2 3 4 5 7 9 10 11 13 15 17 19 23 25 31 33 35 37)
     ./test/test.csh $i
     if ($status != 0) then
        echo "Test ${i}: 0 / $values[$i]"
@@ -23,8 +21,5 @@ if (${#failing_tests} != 0) then
   foreach test (${failing_tests})
     echo -n "${test} "
   end
+  printf '\n'
 endif
-
-printf '\n\n=================\n'
-echo -n "Total : ${score} /  100"
-printf '\n=================\n\n'
