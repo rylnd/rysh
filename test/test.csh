@@ -61,18 +61,11 @@ case 4:
         goto fail
     endif
 breaksw
-case 8:
 case 23:
-case 24:
 case 25:
-case 28:
 case 31:
-case 32:
 case 33:
-case 34:
 case 35:
-case 22:
-case 30:
     if(! -f rysh) then
        echo "Please compile rysh before running this Test"
        goto fail
@@ -121,16 +114,12 @@ case 10:
     endif
 breaksw
 case 5:
-case 6:
 case 7:
 case 9:
 case 11:
 case 13:
-case 14:
 case 15:
-case 16:
 case 17:
-case 18:
 case 19:
     if(! -f rysh) then
        echo "Please compile rysh before running this Test"
@@ -146,9 +135,7 @@ case 19:
        goto fail
     endif
 breaksw
-case 20:
 case 21:
-case 26:
 case 27:
     if(! -f rysh) then
        echo "Please compile rysh before running this Test"
@@ -190,7 +177,6 @@ case 27:
     endif
 breaksw
 case 29:
-case 36:
     if(! -f rysh) then
        echo "Please compile rysh before running this Test"
        goto fail
